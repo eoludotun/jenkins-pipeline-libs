@@ -217,7 +217,7 @@ def call(body) {
                     // do some clean up before publishing package
                     // .gitignore should cover 'artifacts'
                     // sh 'rm -rf node_modules artifacts ci'
-                    sh 'rm -rf node_modules ci'
+                    sh 'rm -rf node_modules ci coverage'
                
                     // npm is more flexible than yarn for this stage. 
                     echo "Deploying NPM packages to Nexus repository"
