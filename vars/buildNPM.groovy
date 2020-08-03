@@ -3,7 +3,7 @@
 /*
  * Main build script for NPM-based FOLIO projects
  *
- * Configurable parameters: 
+ * Configurable parameters:
  *
  * buildNode: label of jenkin's slave build node to use
  * doDocker:  Build, test, and publish Docker image via 'buildDocker' (Default: 'no')
@@ -14,12 +14,12 @@
  * regressionDebugMode:  Enable extra debug logging in regression tests (Default: false)
  * runDupeCheck: check stripes framework for duplicate stripes-* dependencies. (Default: false)
  * runLint: Run ESLint via 'yarn lint' (Default: 'no')
- * runRegression (DISABLED) : Run UI regression module tests for PRs - 'yes' or 'no' (Default: 'no') 
+ * runRegression (DISABLED) : Run UI regression module tests for PRs - 'yes' or 'no' (Default: 'no')
  * runScripts: A "collection" of script commands and script arguments.  (Default: [])
  * runSonarqube: Run the Sonarqube scanner and generate reports on sonarcloud.io (Default: 'no')
  * runTest: Run unit tests via 'yarn test' (Default: 'no')
  * runTestOptions:  Extra opts to pass to 'yarn test'
- * stripesPlatform (DISABLED): Map consisting of modules's stripes platform and branch (Default: []) 
+ * stripesPlatform (DISABLED): Map consisting of modules's stripes platform and branch (Default: [])
 */
 
 
@@ -30,9 +30,9 @@ def call(body) {
   body()
 
   def foliociLib = new org.folio.foliociCommands()
-  
+
   // default is to deploy to npm repo when branch is master
-  // Note: this doesn't really work.  If set to boolean false, 
+  // Note: this doesn't really work.  If set to boolean false,
   // then the default boolean true will be set.  Set as string
   // 'false' or 'no'
   def npmDeploy = config.npmDeploy ?: true
@@ -48,13 +48,13 @@ def call(body) {
   def publishModDescriptor = config.publishModDescriptor ?: false
   if (publishModDescriptor ==~ /(?i)(Y|YES|T|TRUE)/) { publishModDescriptor = true }
   if (publishModDescriptor ==~ /(?i)(N|NO|F|FALSE)/) { publishModDescriptor = false }
-  
+
   // default is don't run regression tests for PRs
   def runRegression = config.runRegression ?: false
   if (runRegression ==~ /(?i)(Y|YES|T|TRUE)/) { runRegression = true }
   if (runRegression ==~ /(?i)(N|NO|F|FALSE)/) { runRegression = false }
 
-  // enable debugging logging on regression tests 
+  // enable debugging logging on regression tests
   def regressionDebugMode = config.regressionDebugMode ?: false
 
   // run 'yarn lint'
@@ -70,7 +70,7 @@ def call(body) {
   // default runTestOptions
   def runTestOptions = config.runTestOptions ?: ''
 
-  // default runSonarqube 
+  // default runSonarqube
   def runSonarqube = config.runSonarqube ?: false
 
   // default runDupeCheck
@@ -86,19 +86,19 @@ def call(body) {
   // run NPM script.  An empty Map
   def runScripts = config.runScripts ?: []
 
-  // use the smaller nodejs build node since most 
+  // use the smaller nodejs build node since most
   // Nodejs builds are Stripes.
   def buildNode = config.buildNode ?: 'jenkins-slave-all'
 
 
-  properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', 
-                                          artifactNumToKeepStr: '15', 
-                                          daysToKeepStr: '', 
-                                          numToKeepStr: '30'))]) 
- 
-  
+  properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '',
+                                          artifactNumToKeepStr: '15',
+                                          daysToKeepStr: '',
+                                          numToKeepStr: '30'))])
+
+
   node(buildNode) {
-    timeout(60) { 
+    timeout(60) {
 
       try {
         stage('Checkout') {
@@ -129,13 +129,13 @@ def call(body) {
               echo "npmDeploy is true"
             }
             setEnvNPM()
-             
+
           }
 
           withCredentials([string(credentialsId: 'jenkins-npm-folioci',variable: 'NPM_TOKEN')]) {
             withNPM(npmrcConfig: env.npmConfig) {
               stage('NPM Install') {
-                sh 'yarn install' 
+                sh 'yarn install'
                 sh 'yarn list --pattern @folio'
                 // save generated yarn.lock for possible debugging
                 sh 'mkdir -p artifacts/yarn/'
@@ -145,10 +145,16 @@ def call(body) {
 
               if (runLint) {
                 runLintNPM()
-              } 
+              }
 
               if (runTest) {
                 runTestNPM(runTestOptions)
+                echo "looking for BigTest Report"
+                sh 'ls -l ./artifacts/coverage'
+                echo "looking for Jest Report"
+                sh 'ls -l ./coverage'
+                echo "looking for any *.info"
+                sh 'find . -name "*.info"'
               }
 
               if (runDupeCheck) {
@@ -157,27 +163,27 @@ def call(body) {
 
               // Stage 'Run NPM scripts' - as parallel jobs
               // Hints: https://issues.jenkins-ci.org/browse/JENKINS-38268
-              if (runScripts.size() >= 1) { 
+              if (runScripts.size() >= 1) {
                 def scriptJobs = [:]
-                runScripts.each { 
-                  it.each { 
+                runScripts.each {
+                  it.each {
                     scriptName, scriptArgs -> scriptJobs[it] = { runNPMScript(scriptName,scriptArgs) }
                   }
                 }
                 parallel scriptJobs
-              } 
+              }
 
 
-              // Run Sonarqube scanner       
+              // Run Sonarqube scanner
               if (runSonarqube) {
                 stage('Run Sonarqube') {
-                  sonarqubeScanNPM() 
+                  sonarqubeScanNPM()
                 }
               }
-         
-              stage('Generate Module Descriptor') { 
+
+              stage('Generate Module Descriptor') {
                 // really meant to cover non-Stripes module cases. e.g mod-graphql
-                if (modDescriptor) {       
+                if (modDescriptor) {
                   if (env.snapshot) {
                     // update the version to the snapshot version
                     echo "Update Module Descriptor version to snapshot version"
@@ -193,7 +199,7 @@ def call(body) {
                      "> artifacts/md/${env.folioName}.json"
                   modDescriptor = "${env.WORKSPACE}/project/artifacts/md/${env.folioName}.json"
                 }
-              } 
+              }
 
               // interface dep check.  releases only for now.
               if (env.isRelease) {
@@ -218,8 +224,8 @@ def call(body) {
                     // .gitignore should cover 'artifacts'
                     // sh 'rm -rf node_modules artifacts ci'
                     sh 'rm -rf node_modules ci'
-               
-                    // npm is more flexible than yarn for this stage. 
+
+                    // npm is more flexible than yarn for this stage.
                     echo "Deploying NPM packages to Nexus repository"
                     sh 'npm publish'
                   }
@@ -229,16 +235,16 @@ def call(body) {
             }  // end withNPM
             // remove .npmrc put in directory by withNPM
             sh 'rm -f .npmrc'
-          }  // end WithCred    
+          }  // end WithCred
 
           if (config.doDocker) {
             stage('Docker Build') {
-              echo "Building Docker image for $env.name:$env.version" 
+              echo "Building Docker image for $env.name:$env.version"
               config.doDocker.delegate = this
               config.doDocker.resolveStrategy = Closure.DELEGATE_FIRST
               config.doDocker.call()
             }
-          } 
+          }
 
           if (( env.BRANCH_NAME == 'master' ) || ( env.isRelease )) {
 
@@ -254,43 +260,43 @@ def call(body) {
                 }
               }
             }
-          } 
+          }
         } // end dir
 
         // actions specific to PRs
         /*
         *  Unused or disabled checks
-        *   
+        *
         * if (env.CHANGE_ID) {
-        * 
+        *
         *   // ensure tenant id is unique
         *  // def tenant = "${env.BRANCH_NAME}_${env.BUILD_NUMBER}"
         *  def tenant = "pr_${env.CHANGE_ID}_${env.BUILD_NUMBER}"
         *  tenant = foliociLib.replaceHyphen(tenant)
         *
-        *  if (stripesPlatform != null) { 
+        *  if (stripesPlatform != null) {
         *    dir("${env.WORKSPACE}/$stripesPlatform.repo") {
         *      stage('Build Stripes Platform') {
-        *        git branch: stripesPlatform.branch, 
+        *        git branch: stripesPlatform.branch,
         *            url: "https://github.com/folio-org/${stripesPlatform.repo}"
-        *        buildStripesPlatformPr(env.okapiUrl,tenant) 
+        *        buildStripesPlatformPr(env.okapiUrl,tenant)
         *      }
-        *    }             
+        *    }
         *  }
         *
-        *  if (runRegression) { 
-        *    stage('Bootstrap Tenant') { 
-        *      def tenantStatus = deployTenant("$okapiUrl","$tenant") 
+        *  if (runRegression) {
+        *    stage('Bootstrap Tenant') {
+        *      def tenantStatus = deployTenant("$okapiUrl","$tenant")
         *      env.tenantStatus = tenantStatus
         *    }
-        * 
+        *
         *    if (env.tenantStatus != '0') {
         *      echo "Tenant Bootstrap Status: $env.tenantStatus"
         *      echo "Problem deploying tenant. Skipping UI Regression testing."
         *    }
-        *    else { 
-        *      dir("${env.WORKSPACE}") { 
-        *        stage('Run UI Integration Tests') { 
+        *    else {
+        *      dir("${env.WORKSPACE}") {
+        *        stage('Run UI Integration Tests') {
         *          def testOpts = [ tenant: tenant,
         *                           folioUser: tenant + '_admin',
         *                           folioPassword: 'admin',
@@ -300,7 +306,7 @@ def call(body) {
         *        }
         *      }
         *    }
-        *  }  
+        *  }
         * }  // env CHANGE_ID
         */
 
@@ -313,7 +319,7 @@ def call(body) {
       }
       finally {
         dir("${env.WORKSPACE}") {
-                 
+
             // publish yarn.lock
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: false,
                          keepAll: true, reportDir: 'project/artifacts/yarn',
@@ -340,6 +346,6 @@ def call(body) {
       }
     } // end timeout
   } // end node
-    
-} 
+
+}
 
