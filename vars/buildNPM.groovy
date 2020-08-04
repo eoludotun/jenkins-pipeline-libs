@@ -334,13 +334,13 @@ def call(body) {
           publishHTML([allowMissing: true, alwaysLinkToLastBuild: false,
                        keepAll: true, reportDir: 'project/artifacts/coverage/lcov-report',
                        reportFiles: 'index.html',
-                       reportName: 'LCov Coverage Report',
-                       reportTitles: 'LCov Coverage Report'])
+                       reportName: 'Big Test LCov Coverage Report',
+                       reportTitles: 'Big Test LCov Coverage Report'])
           publishHTML([allowMissing: true, alwaysLinkToLastBuild: false,
                        keepAll: true, reportDir: 'project/coverage/lcov-report',
                        reportFiles: 'index.html',
-                       reportName: 'LCov Coverage Report',
-                       reportTitles: 'LCov Coverage Report'])
+                       reportName: 'Jest LCov Coverage Report',
+                       reportTitles: 'Jest LCov Coverage Report'])
         }
         sendNotifications currentBuild.result
       }
