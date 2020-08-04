@@ -148,6 +148,7 @@ def call(body) {
               }
 
               if (runTest) {
+                sh "mkdir coverage"
                 runTestNPM(runTestOptions)
                 echo "looking for BigTest Report"
                 sh 'ls -l ./artifacts/coverage'
