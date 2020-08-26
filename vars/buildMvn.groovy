@@ -11,6 +11,7 @@
  * publishPreview: publish preview image to preview CI environment (Default: 'no'/false)
  * publishAPI: Publish API RAML documentation.  (Default: 'no'/false)
  * runLintRamlCop: Run 'raml-cop' on back-end modules that have declared RAML in api.yml (Default: 'no'/false)
+ * mkDeb: Make Debian package if release is true.  (Default: false)
 */
 
 
@@ -48,6 +49,11 @@ def call(body) {
   def publishAPI = config.publishAPI ?: false
   if (publishAPI ==~ /(?i)(Y|YES|T|TRUE)/) { publishAPI = true }
   if (publishAPI ==~ /(?i)(N|NO|F|FALSE)/) { publishAPI = false }
+
+  // Build debian package. Default is false
+  def mkDeb = config.mkDeb ?: false
+  if (mkDeb ==~ /(?i)(Y|YES|T|TRUE)/) { mkDeb = true }
+  if (mkDeb ==~ /(?i)(N|NO|F|FALSE)/) { mkDeb = false }
 
   // deploy module to Kubernetes. Default is false
   def doKubeDeploy = config.doKubeDeploy ?: false
@@ -205,7 +211,11 @@ def call(body) {
           }
         }
 
-
+        // if (env.isRelease) { 
+             stage('Build Debian Package') {
+               mkDeb("$env.name","$env.version")  
+             }
+        // }
         if (doLintRamlCop) {
           stage('Lint raml schema') {
             runLintRamlSchema()
