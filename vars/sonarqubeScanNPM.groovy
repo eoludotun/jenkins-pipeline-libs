@@ -15,7 +15,7 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
       def excludeFiles = '**/docs/**,**/node_modules/**,**/examples/**,**/artifacts/**,**/ci/**,Jenkinsfile,**/LICENSE,**/*.css,**/*.md,**/*.json,**/tests/**,**/stories/*.js,**/test/**,**/.stories.js,**/resources/bigtest/interactors/**,**/resources/bigtest/network/**,**/*-test.js,**/*.test.js,**/*-spec.js,**/karma.conf.js,**/jest.config.js'
 
       if (env.CHANGE_ID) {
-        sh "${scannerHome}/bin/sonar-scanner " +
+        sh "${scannerHome}/bin/sonar-scanner -X" +
           "-Dsonar.projectKey=org.folio:${env.projectName} " +
           "-Dsonar.projectName=${env.projectName} " +
           "-Dsonar.organization=folio-org " +
