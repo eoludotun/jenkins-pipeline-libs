@@ -347,6 +347,12 @@ def call(body) {
                        reportFiles: 'index.html',
                        reportName: 'Jest LCov Coverage Report',
                        reportTitles: 'Jest LCov Coverage Report'])
+ 
+          // Archive sonarqube scanner generated files for debugging
+          sh 'tar cf sonarwork.tar .scannerwork'
+          sh 'gzip sonarwork.tar'
+          archiveArtifacts artifacts: 'scannerwork.tar.gz', followSymlinks: false 
+         
         }
         sendNotifications currentBuild.result
       }
