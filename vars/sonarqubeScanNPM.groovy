@@ -42,6 +42,10 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
             "-Dsonar.language=js " +
             "-Dsonar.exclusions=${excludeFiles} " +
             "-Dsonar.javascript.lcov.reportPaths=${lcovPath}/lcov.info,${lcovPath2}/lcov.info"
+          // Archive sonarqube scanner generated files for debugging
+          sh 'ls -l'
+          sh 'tar cf sonarwork.tar ./.scannerwork'
+          sh 'gzip sonarwork.tar'
         }
         else {
           sh "${scannerHome}/bin/sonar-scanner " +
