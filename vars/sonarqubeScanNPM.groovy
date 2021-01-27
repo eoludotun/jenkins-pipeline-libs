@@ -12,14 +12,14 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
                         variable: 'GITHUB_ACCESS_TOKEN']]) {
     withSonarQubeEnv('SonarCloud') {
       def scannerHome = tool 'SonarQube-Scanner-4'
-      def excludeFiles = '**/docs/**,**/node_modules/**,**/examples/**,**/artifacts/**,**/ci/**,Jenkinsfile,**/LICENSE,**/*.css,**/*.md,**/*.json,**/tests/**,**/stories/*.js,**/test/**,**/.stories.js,**/resources/bigtest/interactors/**,**/resources/bigtest/network/**,**/*-test.js,**/*.test.js,**/*-spec.js,**/karma.conf.js,**/jest.config.js,**/util/**',**/webpack.*'
+      def excludeFiles = '**/docs/**,**/node_modules/**,**/examples/**,**/artifacts/**,**/ci/**,Jenkinsfile,**/LICENSE,**/*.css,**/*.md,**/*.json,**/tests/**,**/stories/*.js,**/test/**,**/.stories.js,**/resources/bigtest/interactors/**,**/resources/bigtest/network/**,**/*-test.js,**/*.test.js,**/*-spec.js,**/karma.conf.js,**/jest.config.js,**/util/**'
 
       if (env.CHANGE_ID) {
         sh "${scannerHome}/bin/sonar-scanner " +
           "-Dsonar.projectKey=org.folio:${env.projectName} " +
           "-Dsonar.projectName=${env.projectName} " +
           "-Dsonar.organization=folio-org " +
-          "-Dsonar.sources=. " +
+          "-Dsonar.sources=./src " +
           "-Dsonar.language=js " +
           "-Dsonar.exclusions=${excludeFiles} " +
           "-Dsonar.javascript.lcov.reportPaths=${lcovPath}/lcov.info,${lcovPath2}/lcov.info " +
