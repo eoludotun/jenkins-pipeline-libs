@@ -175,7 +175,7 @@ def call(body) {
               // Run Sonarqube scanner       
               if (runSonarqube) {
                 stage('Run Sonarqube') {
-                  sonarqubeScanNPM() 
+                  sonarqubeScanNPM(sonarScanDirs) 
                 }
               }
          
