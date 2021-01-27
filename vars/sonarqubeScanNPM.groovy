@@ -38,7 +38,7 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
             "-Dsonar.projectKey=org.folio:${env.projectName} " +
             "-Dsonar.projectName=${env.projectName} " +
             "-Dsonar.branch.name=${env.BRANCH_NAME} " +
-            "-Dsonar.sources=./src " +
+            "-Dsonar.sources=./src,./lib " +
             "-Dsonar.language=js " +
             "-Dsonar.exclusions=${excludeFiles} " +
             "-Dsonar.javascript.lcov.reportPaths=${lcovPath}/lcov.info,${lcovPath2}/lcov.info"
