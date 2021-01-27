@@ -19,6 +19,7 @@
  * runSonarqube: Run the Sonarqube scanner and generate reports on sonarcloud.io (Default: 'no')
  * runTest: Run unit tests via 'yarn test' (Default: 'no')
  * runTestOptions:  Extra opts to pass to 'yarn test'
+ * sonarScanDirs: A string that lists directories (comma-separated) the Sonarqube scanner should scan.  Default: './src'
  * stripesPlatform (DISABLED): Map consisting of modules's stripes platform and branch (Default: []) 
 */
 
@@ -78,6 +79,9 @@ def call(body) {
 
   // default mod descriptor
   def modDescriptor = config.modDescriptor ?: ''
+
+  // set Sonarqube root directories to scan. Default to './src'
+  def sonarScanDirs = config.sonarScanDirs ?: './src'
 
   // default Stripes platform.  Empty Map
   // disabled for now
