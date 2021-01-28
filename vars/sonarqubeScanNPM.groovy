@@ -6,7 +6,7 @@
  */
 
 
-def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') {
+def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage', String sonarScanDirs) {
   withCredentials([[$class: 'StringBinding',
                         credentialsId: '6b0ebf62-3a12-4e6b-b77e-c45817b5791b',
                         variable: 'GITHUB_ACCESS_TOKEN']]) {
@@ -14,12 +14,14 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
       def scannerHome = tool 'SonarQube-Scanner-4'
       def excludeFiles = '**/docs/**,**/node_modules/**,**/examples/**,**/artifacts/**,**/ci/**,Jenkinsfile,**/LICENSE,**/*.css,**/*.md,**/*.json,**/tests/**,**/stories/*.js,**/test/**,**/.stories.js,**/resources/bigtest/interactors/**,**/resources/bigtest/network/**,**/*-test.js,**/*.test.js,**/*-spec.js,**/karma.conf.js,**/jest.config.js'
 
+      echo "SonarScanDirs=$sonarScanDirs"
+
       if (env.CHANGE_ID) {
         sh "${scannerHome}/bin/sonar-scanner " +
           "-Dsonar.projectKey=org.folio:${env.projectName} " +
           "-Dsonar.projectName=${env.projectName} " +
           "-Dsonar.organization=folio-org " +
-          "-Dsonar.sources=${env.sonarScanDirs} " +
+          "-Dsonar.sources=${sonarScanDirs} " +
           "-Dsonar.language=js " +
           "-Dsonar.exclusions=${excludeFiles} " +
           "-Dsonar.javascript.lcov.reportPaths=${lcovPath}/lcov.info,${lcovPath2}/lcov.info " +
@@ -38,7 +40,7 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
             "-Dsonar.projectKey=org.folio:${env.projectName} " +
             "-Dsonar.projectName=${env.projectName} " +
             "-Dsonar.branch.name=${env.BRANCH_NAME} " +
-            "-Dsonar.sources=${env.sonarScanDirs} " +
+            "-Dsonar.sources=${sonarScanDirs} " +
             "-Dsonar.language=js " +
             "-Dsonar.exclusions=${excludeFiles} " +
             "-Dsonar.javascript.lcov.reportPaths=${lcovPath}/lcov.info,${lcovPath2}/lcov.info"
@@ -48,7 +50,7 @@ def call(String lcovPath = 'artifacts/coverage', String lcovPath2 = 'coverage') 
             "-Dsonar.organization=folio-org " +
             "-Dsonar.projectKey=org.folio:${env.projectName} " +
             "-Dsonar.projectName=${env.projectName} " +
-            "-Dsonar.sources=${env.sonarScanDirs} " +
+            "-Dsonar.sources=${sonarScanDirs} " +
             "-Dsonar.language=js " +
             "-Dsonar.exclusions=${excludeFiles} " +
             "-Dsonar.javascript.lcov.reportPaths=${lcovPath}/lcov.info,${lcovPath2}/lcov.info"

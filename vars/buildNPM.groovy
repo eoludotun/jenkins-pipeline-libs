@@ -175,6 +175,7 @@ def call(body) {
               // Run Sonarqube scanner       
               if (runSonarqube) {
                 stage('Run Sonarqube') {
+                  echo "$sonarScanDirs"
                   sonarqubeScanNPM(sonarScanDirs) 
                 }
               }
