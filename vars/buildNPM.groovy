@@ -74,14 +74,14 @@ def call(body) {
   // default runSonarqube 
   def runSonarqube = config.runSonarqube ?: false
 
+  // set Sonarqube root directories to scan. Default to './src'
+  def sonarScanDirs = config.sonarScanDirs ?: './src'
+
   // default runDupeCheck
   def runDupeCheck = config.runDupeCheck ?: false
 
   // default mod descriptor
   def modDescriptor = config.modDescriptor ?: ''
-
-  // set Sonarqube root directories to scan. Default to './src'
-  def sonarScanDirs = config.sonarScanDirs ?: './src'
 
   // default Stripes platform.  Empty Map
   // disabled for now
