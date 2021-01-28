@@ -144,9 +144,9 @@ def call(body) {
         }
 
         // Run Sonarqube
-        stage('SonarQube Analysis') {
-          sonarqubeMvn()
-        }
+        // stage('SonarQube Analysis') {
+        //   sonarqubeMvn()
+        // }
 
         if ( env.isRelease && fileExists(modDescriptor) ) {
           stage('Dependency Check') {
