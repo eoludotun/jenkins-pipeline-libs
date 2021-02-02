@@ -83,6 +83,12 @@ def gitTag() {
   return tag
 }
 
+// get git committer/author
+def gitAuthor() {
+  def authorName = sh(script: "git log -n 1 ${env.GIT_COMMIT} --format=%cN", returnStdout: true).trim()
+  return authorName 
+}
+
 // compare git tag with env.version
 def boolean tagMatch(String version) {
   def tag = sh(returnStdout: true, script: 'git tag -l --points-at HEAD | tr -d v').trim()

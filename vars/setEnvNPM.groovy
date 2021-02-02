@@ -42,6 +42,9 @@ def call() {
   // the actual NPM package name as defined in package.json
   env.npmName = foliociLib.npmName('package.json')
 
+  // Git Author/Committer
+  env.gitCommitter = foliociLib.gitAuthor()
+
   // folioName is similar to npmName except make name okapi compliant
   def Map folioNameVer = foliociLib.npmFolioNameVersion('package.json')          
   folioNameVer.each { key, value ->
@@ -66,6 +69,7 @@ def call() {
   echo "Git Project Name: $env.projectName"
   echo "Git Project Url: $env.projUrl"
   echo "Git Commit SHA1: $env.gitCommit"
+  echo "Git Committer: $env.gitCommitter"
 
   // Check to ensure git tag and NPM version match if release
   if (env.isRelease) {
