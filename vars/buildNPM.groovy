@@ -151,7 +151,7 @@ def call(body) {
                 runLintNPM()
               } 
 
-              if (runTest) {
+              if (runTest) && (env.gitAuthor != 'FOLIO Translations Bot') {
                 // stub for FOLIO-2972
                 echo "$env.gitCommitter"
 
