@@ -152,8 +152,8 @@ def call(body) {
               } 
 
               if (runTest) {
-                echo "$GIT_AUTHOR_NAME"
-                echo "$GIT_COMMITTER_NAME"
+                echo "$env.GIT_AUTHOR_NAME"
+                echo "$env.GIT_COMMITTER_NAME"
 
                 runTestNPM(runTestOptions)
               }
