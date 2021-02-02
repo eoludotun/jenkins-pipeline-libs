@@ -152,8 +152,8 @@ def call(body) {
               } 
 
               if (runTest) {
-                echo "$env.GIT_AUTHOR_NAME"
-                echo "$env.GIT_COMMITTER_NAME"
+                // stub for FOLIO-2972
+                echo "$env.gitCommitter"
 
                 runTestNPM(runTestOptions)
               }
