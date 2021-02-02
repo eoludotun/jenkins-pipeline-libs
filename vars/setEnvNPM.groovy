@@ -60,6 +60,10 @@ def call() {
 
   //git commit sha1
   env.gitCommit = foliociLib.gitCommit()
+
+  // Git Author/Committer
+  env.gitCommitter = foliociLib.gitAuthor(env.gitCommit)
+
   env.projUrl = foliociLib.getProjUrl()
 
   echo "NPM Package Name: $env.npmName"
