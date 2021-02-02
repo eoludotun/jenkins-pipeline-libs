@@ -51,7 +51,7 @@ def npmShortName(String string) {
 
 // get git commit/sha1
 def gitCommit(){
-    return sh(returnStdout: true, script: 'git rev-parse HEAD')
+    return sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 }
 
 // get base repo/project name
@@ -85,7 +85,7 @@ def gitTag() {
 
 // get git committer/author
 def gitAuthor(String commit) {
-  def authorName = sh(script: 'git log -n 1 \"${commit}\" --format=%cN', returnStdout: true).trim()
+  def authorName = sh(script: "git log -n 1 ${commit} --format=%cN", returnStdout: true).trim()
   return authorName 
 }
 
