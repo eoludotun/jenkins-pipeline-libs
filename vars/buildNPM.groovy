@@ -139,16 +139,16 @@ def call(body) {
           withCredentials([string(credentialsId: 'jenkins-npm-folioci',variable: 'NPM_TOKEN')]) {
             withNPM(npmrcConfig: env.npmConfig) {
               stage('NPM Install') {
-                sh 'yarn install' 
-                sh 'yarn list --pattern @folio'
+                // sh 'yarn install' 
+                // sh 'yarn list --pattern @folio'
                 // save generated yarn.lock for possible debugging
-                sh 'mkdir -p artifacts/yarn/'
-                sh 'cp yarn.lock artifacts/yarn/yarn.lock'
-                sh 'bzip2 artifacts/yarn/yarn.lock'
+                // sh 'mkdir -p artifacts/yarn/'
+                // sh 'cp yarn.lock artifacts/yarn/yarn.lock'
+                // sh 'bzip2 artifacts/yarn/yarn.lock'
               }
 
               if (runLint) {
-                runLintNPM()
+                // runLintNPM()
               } 
 
               if ((runTest) && (env.gitAuthor != 'FOLIO Translations Bot')) {
@@ -159,7 +159,7 @@ def call(body) {
               }
 
               if (runDupeCheck) {
-                checkStripesDupes('yarn.lock')
+                // checkStripesDupes('yarn.lock')
               }
 
               // Stage 'Run NPM scripts' - as parallel jobs
